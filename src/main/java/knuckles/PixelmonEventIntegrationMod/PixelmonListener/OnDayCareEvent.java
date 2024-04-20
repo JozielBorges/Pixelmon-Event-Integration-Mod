@@ -5,11 +5,7 @@ import knuckles.PixelmonEventIntegrationMod.Communication.DaycareCommunication;
 import knuckles.PixelmonEventIntegrationMod.PixelmonEventIntegrationMod;
 import knuckles.PixelmonEventIntegrationMod.Utils.EventsINTutils;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import org.apache.logging.log4j.LogManager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class OnDayCareEvent extends EventsINTutils {
     private final Intermediary intermediary = PixelmonEventIntegrationMod.INSTANCE.getIntermediary();

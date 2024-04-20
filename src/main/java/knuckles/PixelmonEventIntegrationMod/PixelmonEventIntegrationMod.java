@@ -1,7 +1,6 @@
 package knuckles.PixelmonEventIntegrationMod;
 
 import com.pixelmonmod.pixelmon.Pixelmon;
-import it.unimi.dsi.fastutil.objects.ObjectList;
 import knuckles.PixelmonEventIntegrationMod.PixelmonListener.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -10,17 +9,13 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod("pixelmoneventintegrationmod")
 public class PixelmonEventIntegrationMod {
 
     // Directly reference a log4j logger.
-    private static final Logger LOGGER = LogManager.getLogger();
-
     private final Intermediary intermediary = new Intermediary();
     public static PixelmonEventIntegrationMod INSTANCE;
 

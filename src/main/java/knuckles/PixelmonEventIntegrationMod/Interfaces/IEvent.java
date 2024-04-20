@@ -1,18 +1,15 @@
 package knuckles.PixelmonEventIntegrationMod.Interfaces;
 
-import net.minecraft.stats.Stat;
-import org.apache.logging.log4j.LogManager;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public interface IEvent {
-    static final HashMap<String, List<Class<?>>> LISTENERS = new HashMap<>();
-    static final HashMap<String, Boolean> LISTENERS_BOOLEAN = new HashMap<>();
-    static final HashMap<Class<?>,List<Object>> DATA = new HashMap<>();
-    static final List<String> LIST_LISTENERS_ONLINE = new ArrayList<>();
+    final HashMap<String, List<Class<?>>> LISTENERS = new HashMap<>();
+    final HashMap<String, Boolean> LISTENERS_BOOLEAN = new HashMap<>();
+    final HashMap<Class<?>,List<Object>> DATA = new HashMap<>();
+    final List<String> LIST_LISTENERS_ONLINE = new ArrayList<>();
 
     /**
      * Registers a listener to a specific event for a given plugin.

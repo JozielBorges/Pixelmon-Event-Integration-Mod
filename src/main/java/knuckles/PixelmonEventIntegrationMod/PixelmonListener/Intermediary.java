@@ -1,9 +1,6 @@
 package knuckles.PixelmonEventIntegrationMod.PixelmonListener;
 
-import com.pixelmonmod.pixelmon.api.events.DropEvent;
-import knuckles.PixelmonEventIntegrationMod.Communication.*;
 import knuckles.PixelmonEventIntegrationMod.Utils.EventsINTutils;
-import org.apache.logging.log4j.LogManager;
 
 import java.util.*;
 
