@@ -1,81 +1,49 @@
 package knuckles.PixelmonEventIntegrationMod.PixelmonListener;
 
+import com.pixelmonmod.pixelmon.api.events.DropEvent;
 import knuckles.PixelmonEventIntegrationMod.Communication.*;
+import knuckles.PixelmonEventIntegrationMod.Utils.EventsINTutils;
 import org.apache.logging.log4j.LogManager;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
+
+import static knuckles.PixelmonEventIntegrationMod.PixelmonEventIntegrationMod.ALL_EVENTS;
 
 public class Intermediary {
-    //NOT IMPLEMENTED// THIS SECTION IS THE SYSTEM TO MANAGER WHO IS LISTENING TO an EVENT TO PREVENT DATA LOSS
-    private List<String> pluginsUsingMeUwU = new ArrayList<>();
-    private HashMap<String,List<String>> pluginsBusy = new LinkedHashMap<>();
 
-    public boolean addPlugin(String pluginID){
-        return pluginsUsingMeUwU.add(pluginID);
+    /**
+     * Register a listener for a specific event.
+     *
+     * @param plugin the class of your plugin
+     * @param event the class of the event
+     */
+    public void registerListener(Class<?> plugin, Class<?> event) {
+        // Get the EventsINTutils instance for the specified event
+        EventsINTutils eventsIntUtils = (EventsINTutils) ALL_EVENTS.get(event);
+
+        // Register the listener for the specified plugin and event
+        eventsIntUtils.registerListenerToEvent(plugin, event);
     }
 
-    private void Cleaner(){
+    /**
+     * Get the List with the event data
+     *
+     * @param  plugin	        The plugin class registered
+     * @param  event	        The event registered
+     * @param  communication	The Communication class sent by the event
+     * @return         	    List of event data if available, else an empty ArrayList
+     */
+    public List<Object> getCommunication(Class<?> plugin, Class<?> event, Class<?> communication) {
+        // Retrieve the EventsINTutils object associated with the event
+        EventsINTutils eventUtils = (EventsINTutils) ALL_EVENTS.get(event);
 
+        // Check if the event has data stored
+        if (!eventUtils.hasValueInThisKey(event)) {
+            // If data exists, return the filtered event list data
+            return (List<Object>) eventUtils.filterEventListData(plugin, event, communication);
+        } else {
+            // If no data, return an empty ArrayList
+            return new ArrayList<>();
+        }
     }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private  final List<PokemonEntityCommunication> pokemonEntityCommunications = new ArrayList<>();
-    protected void addPokemonEntityCommunication(PokemonEntityCommunication communication){
-        pokemonEntityCommunications.add(communication);
-    }
-    public List<PokemonEntityCommunication> getPokemonEntityCommunications(){return pokemonEntityCommunications;}
-    public void clearPokemonEntityCommunication(){pokemonEntityCommunications.clear();}
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private final List<PokemonCaptureCommunication> pokemonCaptureCommunications = new ArrayList<>();
-    protected void addPokemonCaptureCommunication(PokemonCaptureCommunication a){pokemonCaptureCommunications.add(a);}
-    public List<PokemonCaptureCommunication> getPokemonCaptureCommunication(){return pokemonCaptureCommunications;}
-    public void clearPokemonCaptureCommunication(){pokemonCaptureCommunications.clear();}
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private final List<ItemCraftingCommunication> itemCraftingCommunications = new ArrayList<>();
-    protected void addItemCraftingCommunication(ItemCraftingCommunication a){
-        itemCraftingCommunications.add(a);
-    }
-    public List<ItemCraftingCommunication> getItemCraftingCommunications(){return itemCraftingCommunications;}
-    public void clearItemCraftingCommunication(){
-        itemCraftingCommunications.clear();
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private final List<FishingCommunication> fishingCommunications = new ArrayList<>();
-
-    protected void addFishingCommunication(FishingCommunication a){
-        fishingCommunications.add(a);
-    }
-
-    public List<FishingCommunication> getFishingCommunications(){ return fishingCommunications;}
-    public void clearFishingCommunication(){fishingCommunications.clear();}
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    private final List<DaycareCommunication> daycareCommunications = new ArrayList<>();
-
-    protected void addDaycareCommunication(DaycareCommunication a){
-        daycareCommunications.add(a);
-    }
-
-    public List<DaycareCommunication> getDaycareCommunications(){return daycareCommunications;}
-    public void clearDaycareCommunication(){daycareCommunications.clear();}
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private final List<BerryCatchCommunication> berryCatchCommunications = new ArrayList<>();
-
-    protected void addBerryCatchCommunication(BerryCatchCommunication a) { berryCatchCommunications.add(a);}
-
-    public List<BerryCatchCommunication> getBerryCatchCommunication(){return berryCatchCommunications;}
-    public void clearBerryCatchCommunication(){berryCatchCommunications.clear();}
-
 }

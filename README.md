@@ -7,6 +7,32 @@ This mod provides integration between Pixelmon servers and Bukkit/Spigot plugins
 - Listens to essential Pixelmon events, including Pokémon capture, Pokémon defeat, and more.
 - Designed for seamless integration with Pixelmon servers and Bukkit/Spigot plugin development.
 
+## HOW IT WORKS?
+The mod registers listeners during the Forge load process.
+When a plugin registers itself with the mod,
+all the events designated for listening are stored in memory.
+The plugin can then retrieve these events using the specific function.
+> > getCommunication()
+> 
+> Example: my registered class is asking for the `OnDropEvent`(When a pokemon is defeated) and sending the class we want to be returned `PokemonEntityCommunication` 
+>
+> > getCommunication(this.getClass(), OnDropEvent.class, PokemonEntityCommunication.class)
+
+>### Note: The mod will not return the data if the event and communication are not compatible. Refer to the list below for better understanding.
+
+>  ## LIST OF EVENTS AND COMMUNICATION AVAILABLE
+>
+> > onDayCare --> DaycareCommunication
+>
+> >  onDropEvent --> PokemonEntityCommunication
+>
+> >  onFishing --> FishingCommunication
+>
+> >  onPixelmonReceive --> PokemonCaptureCommunication
+>
+> >  onPlayerRightClick --> BerryCatchCommunication & ItemCraftingCommunication
+> 
+
 ## Usage for DEVS
 
 1. **Adding the Pixelmon Event Integration Mod to Your Plugin**
@@ -15,7 +41,7 @@ This mod provides integration between Pixelmon servers and Bukkit/Spigot plugins
 <dependency>
     <groupId>knuckles</groupId>
     <artifactId>PixelmonEventIntegrationMod</artifactId>
-    <version>1.0</version>
+    <version>2.0</version>
     <scope>system</scope>
     <systemPath>"CHANGE ME"</systemPath>
 </dependency>
@@ -31,22 +57,40 @@ This mod provides integration between Pixelmon servers and Bukkit/Spigot plugins
     public CommunicationExecutor(MYPLUGIN plugin){
         p = plugin;
         intermediary = PixelmonEventIntegrationMod.INSTANCE.getIntermediary();
+        // REGISTER THE EVENTS YOU WANT TO LISTEN
+        intermediary.registerListener(this.getClass(), OnDropEvent.class);
+        intermediary.registerListener(this.getClass(), PlayerRightClickListener.class);
     }
 
     public final BukkitRunnable read = new BukkitRunnable() {
         @Override
         public void run() {
-            //Get the list from the mod, and clear it to not send the same data(if not clear it, will be a infinite loop)
-            HashSet<PokemonEntityCommunication> pokemonToDo = new HashSet<>(intermediary.getPokemonEntityCommunications());
-            intermediary.clearPokemonEntityCommunication();
-
-            //Check if the HashSet has data
-            if(!pokemonToDo.isEmpty()){
-                //For each data, do what we want...
-                for(PokemonEntityCommunication comm : pokemonToDo){
-                    pokeDropEvent(comm);
+            
+            intermediary.getCommunication(this.getClass(), OnDropEvent.class, PokemonEntityCommunication.class).forEach(o -> {
+                // THE MOD RETURN THE SAME CLASS YOU SET ABOVE (PokemonEntityCommunication) AS JAVA OBJECT CLASS
+                if(o instanceof PokemonEntityCommunication){
+                    PokemonEntityCommunication b = (PokemonEntityCommunication) o;
+                    pokeDropEvent(b);
                 }
-            }
+            });
+            
+            intermediary.getCommunication(this.getClass(), PlayerRightClickListener.class, BerryCatchCommunication.class).forEach(o -> {
+                if(o instanceof BerryCatchCommunication){
+                    BerryCatchCommunication b = (BerryCatchCommunication) o;
+                    Player player = Bukkit.getPlayer(b.getPlayer());
+
+                    player.sendMessage("You got berry");
+                }
+            });
+            intermediary.getCommunication(this.getClass(), PlayerRightClickListener.class, ItemCraftingCommunication.class).forEach(o -> {
+                if(o instanceof ItemCraftingCommunication){
+                    ItemCraftingCommunication b = (ItemCraftingCommunication) o;
+                    Player player = Bukkit.getPlayer(b.getPlayer());
+
+                    player.sendMessage("You got an item " + b.getItem());
+                }
+            });
+            
         }
     };
   
@@ -78,9 +122,9 @@ private void pokeDropEvent(PokemonEntityCommunication comm){
                     }
             }
         }
-
         player.sendMessage("You got " + XP + " XP");
     }
+}
    ```
 3. Initializing Your Event Executor:
 ```java
@@ -93,6 +137,7 @@ private void pokeDropEvent(PokemonEntityCommunication comm){
 ```
  
 4. Done!
+
    
 ## Installation
 

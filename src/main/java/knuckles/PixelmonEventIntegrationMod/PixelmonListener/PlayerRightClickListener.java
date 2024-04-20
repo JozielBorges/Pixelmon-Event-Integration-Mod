@@ -3,6 +3,7 @@ package knuckles.PixelmonEventIntegrationMod.PixelmonListener;
 import knuckles.PixelmonEventIntegrationMod.Communication.BerryCatchCommunication;
 import knuckles.PixelmonEventIntegrationMod.Communication.ItemCraftingCommunication;
 import knuckles.PixelmonEventIntegrationMod.PixelmonEventIntegrationMod;
+import knuckles.PixelmonEventIntegrationMod.Utils.EventsINTutils;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.Property;
 import net.minecraft.util.math.BlockPos;
@@ -10,16 +11,21 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
-public class PlayerRightClickListener {
+public class PlayerRightClickListener extends EventsINTutils {
     private String ageBerry = "0";
-    private int pokeBallCount = 0;
 
     private final Intermediary intermediary = PixelmonEventIntegrationMod.INSTANCE.getIntermediary();
 
     @SubscribeEvent
     public void onPlayerRightClick(PlayerInteractEvent.RightClickBlock event){
+        if(!LIST_LISTENERS_ONLINE.contains(this.getClass().getName())){
+            return;
+        }
         if(!event.getPlayer().getMainHandItem().isEmpty()){return;}
         BlockPos blockPos = event.getPos();
 
@@ -36,17 +42,18 @@ public class PlayerRightClickListener {
         }
         if (ageBerry.equals("2")){
             ageBerry = "0";
-            intermediary.addBerryCatchCommunication(new BerryCatchCommunication(event.getPlayer().getUUID()));
+            addMyEventDataToData(this.getClass(),new BerryCatchCommunication(event.getPlayer().getUUID()));
         }else{
             ageBerry = "0";
         }
-        //intermediary.addBlockCommunication(new RightClickBlockCommunication(event.getPos(), event.getPlayer().getUUID()));
     }
     @SubscribeEvent
     public void onCraftingItem(PlayerEvent.ItemCraftedEvent event){
-        if(event.getCrafting().getItem().getRegistryName().toString().equals("pixelmon:poke_ball")){
-            intermediary.addItemCraftingCommunication(new ItemCraftingCommunication(event.getPlayer().getUUID(),event.getCrafting()));
+        if(!LIST_LISTENERS_ONLINE.contains(this.getClass().getName())){
+            return;
         }
-        //intermediary.addItemCraftingCommunication(pokeballItem);
+        if(event.getCrafting().getItem().getRegistryName().toString().equals("pixelmon:poke_ball")){
+            addMyEventDataToData(this.getClass(),new ItemCraftingCommunication(event.getPlayer().getUUID(),event.getCrafting()));
+        }
     }
 }

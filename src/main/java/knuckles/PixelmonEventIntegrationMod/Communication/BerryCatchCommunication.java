@@ -2,7 +2,7 @@ package knuckles.PixelmonEventIntegrationMod.Communication;
 
 import java.util.UUID;
 
-public class BerryCatchCommunication {
+public class BerryCatchCommunication  {
     private UUID player;
 
     public BerryCatchCommunication(UUID player) {
